@@ -20,6 +20,8 @@ func _physics_process(delta):
 			sword()
 		player_states.JUMP:
 			jump()
+		player_states.DEAD:
+			dead()
 			
 func _move():
 	input_movement = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
@@ -41,6 +43,9 @@ func _move():
 		
 	if Input.is_action_just_pressed("Jump"):
 		current_state = player_states.JUMP
+	
+	if PlayerData.health <= 0:
+		current_state = player_states.DEAD
 		
 	move_and_slide()
 
@@ -52,6 +57,17 @@ func jump():
 	velocity = input_movement * speed
 	move_and_slide()
 
+func dead():
+	animation_state.travel("dead")
+	await get_tree().create_timer(1).timeout
+	PlayerData.health = 4
+	get_tree().reload_current_scene()
+	
+func flash():
+	$Sprite2D.material.set_shader_parameter("flash_modifier", 1)
+	await get_tree().create_timer(0.3).timeout
+	$Sprite2D.material.set_shader_parameter("flash_modifier", 0)
+	
 func on_states_reset():
 	current_state = player_states.MOVE
 
@@ -60,3 +76,6 @@ func clear_collision():
 	
 func create_collision():
 	$CollisionShape2D.disabled = false
+
+func _on_hitbox_area_entered(area):
+	flash()

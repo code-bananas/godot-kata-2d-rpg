@@ -148,7 +148,7 @@ shape = SubResource("RectangleShape2D_m0ba8")
 disabled = true
 
 [node name="HitBox" type="Area2D" parent="."]
-collision_layer = 4
+collision_layer = 16
 collision_mask = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="HitBox"]
